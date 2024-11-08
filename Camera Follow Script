@@ -1,0 +1,30 @@
+using UnityEngine;
+
+public class CameraFollow : MonoBehaviour
+{
+    public Transform target;
+    public Vector3 offset;
+    public float sensitivity = 100f;
+
+    private float rotationX = 0f;
+    private float rotationY = 0f;
+
+    void Start()
+    {
+        Cursor.lockState = CursorLockMode.Confined; // Confine the cursor to the game window
+        Cursor.visible = true; // Ensure the cursor remains visible
+    }
+
+    void LateUpdate()
+    {
+        // Get mouse input
+        rotationX += Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
+        rotationY -= Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
+        rotationY = Mathf.Clamp(rotationY, -35, 60); // Limit vertical rotation
+
+        // Rotate camera based on mouse movement
+        Quaternion rotation = Quaternion.Euler(rotationY, rotationX, 0);
+        transform.position = target.position + rotation * offset;
+        transform.LookAt(target);
+    }
+}
