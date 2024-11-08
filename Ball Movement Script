@@ -1,0 +1,104 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;  // Import the SceneManager
+
+public class BallMovement : MonoBehaviour
+{
+    public float speed = 10f;                   // Speed of the ball movement
+    public Transform cameraTransform;           // Reference to the camera's transform
+    public Transform spawnPoint;                // The spawn point where the ball will respawn
+    public float fallThreshold = -10f;          // Y-axis value below which the ball is considered to have fallen
+    //public int collectiblesCount = 0;           // Count of collected item
+    private Rigidbody rb;                       // Reference to the Rigidbody component
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        Respawn();  // Set the ball's initial position to the spawn point
+    }
+
+    void Update()
+    {
+        // Ball movement logic
+        float moveHorizontal = Input.GetAxis("Horizontal");
+        float moveVertical = Input.GetAxis("Vertical");
+
+        Vector3 cameraForward = cameraTransform.forward;
+        Vector3 cameraRight = cameraTransform.right;
+
+        cameraForward.y = 0;
+        cameraRight.y = 0;
+
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        Vector3 movement = (cameraForward * moveVertical + cameraRight * moveHorizontal).normalized;
+        rb.AddForce(movement * speed);
+
+        // Check if the ball has fallen off the map
+        if (transform.position.y < fallThreshold)
+        {
+            Respawn();
+        }
+    }
+
+    // Function to respawn the ball and reset rigid body objects
+    void Respawn()
+    {
+        transform.position = spawnPoint.position;
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+    }
+
+    // Detect collisions
+    private void OnCollisionEnter(Collision collision)
+    {
+        // Check if the ball hits a wall
+        if (collision.gameObject.name.Contains("Obs"))
+        {
+            Respawn();  // Respawn the ball
+        }
+
+        // Check if the ball touches the cube (goal point)
+        if (collision.gameObject.name.Contains("NextLevel" +""))  // Assuming the goal is a cube
+        {
+            LoadNextLevel();  // Load the next level when touching the cube
+        }
+    }
+
+    // Detect when the ball triggers a collectible
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.name.Contains("Coin"))
+        {
+            // Increase the collectible count
+            //collectiblesCount++;
+
+            // Optionally, destroy or deactivate the collectible
+            Destroy(other.gameObject);  // Destroy the collectible
+
+            // Debugging log (optional)
+            //Debug.Log("Collected an item! Total collected: " + collectiblesCount);
+        }
+    }
+
+    // Function to load the next level in the build settings
+    void LoadNextLevel()
+    {
+        // Get the index of the current scene
+        int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+
+        // Check if there is a next scene (to avoid errors)
+        if (currentSceneIndex < SceneManager.sceneCountInBuildSettings - 1)
+        {
+            // Load the next scene (level)
+            SceneManager.LoadScene(currentSceneIndex + 1);
+        }
+        else
+        {
+            // If no more levels, you can reload the first level or end the game
+            Debug.Log("No more levels. Restarting the game or displaying end screen.");
+            SceneManager.LoadScene(0);  // Restart from the first level (optional)
+        }
+    }
+}
