@@ -1,0 +1,21 @@
+using UnityEngine;
+
+public class MenuManager : MonoBehaviour
+{
+    public GameObject mainMenu;   // Reference to the Main Menu panel
+    public GameObject levelsMenu; // Reference to the Levels panel
+
+    // This function will be called when the "Levels" button is pressed
+    public void ShowLevels()
+    {
+        mainMenu.SetActive(false);   // Hide the Main Menu
+        levelsMenu.SetActive(true);  // Show the Levels Panel
+    }
+
+    // This function can be used to go back to the Main Menu from Levels Menu
+    public void ShowMainMenu()
+    {
+        mainMenu.SetActive(true);   // show the Main Menu
+        levelsMenu.SetActive(false);  // hide the Levels Pane 
+    }
+}
