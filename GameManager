@@ -1,0 +1,13 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class GameManager : MonoBehaviour
+{
+    // Function to start the game
+    public void StartGame()
+    {
+        // Load the next scene or start game logic
+        // You can either load the next scene or simply enable the game logic here
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);  // Load the next scene
+    }
+}
