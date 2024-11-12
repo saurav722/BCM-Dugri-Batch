@@ -1,0 +1,22 @@
+using UnityEngine;
+
+public class AudioCoin : MonoBehaviour
+{
+    public AudioClip collectSound; // The sound to play when the coin is collected
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // Check if the colliding object is the player (by its name)
+        if (other.gameObject.name == "Sphere")
+        {
+            // Play the collection sound at the coin's position
+            if (collectSound != null)
+            {
+                AudioSource.PlayClipAtPoint(collectSound, transform.position);
+            }
+
+            // Destroy the coin immediately
+            Destroy(gameObject);
+        }
+    }
+}
