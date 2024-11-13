@@ -13,7 +13,7 @@ public class BallMovement : MonoBehaviour
     public Transform cameraTransform;
     public Transform spawnPoint;
     public float fallThreshold = -10f;
-    public int collectiblesCount = 0;
+    //public int collectiblesCount = 0;
     private Rigidbody rb;
 
     //public string gameOverScene = "GameOver"; // The scene to load when health reaches zero
@@ -34,7 +34,7 @@ public class BallMovement : MonoBehaviour
 
     void Update()
     {
-        value = collectiblesCount;
+        //value = collectiblesCount;
         //UpdateUI();
 
         // Ball movement logic
@@ -101,7 +101,7 @@ public class BallMovement : MonoBehaviour
     }
 
     // Detect when the ball triggers a collectible
-    private void OnTriggerEnter(Collider other)
+    /*private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.name.Contains("Coin"))
         {
@@ -110,7 +110,7 @@ public class BallMovement : MonoBehaviour
             Debug.Log("Collected an item! Total collected: " + collectiblesCount);
             //UpdateUI();
         }
-    }
+    }*/
 
     // Function to load the next level in the build settings
     void LoadNextLevel()
