@@ -1,0 +1,16 @@
+using UnityEngine;
+
+public class RotateObject : MonoBehaviour
+{
+    public float rotationSpeed = 50f; // Rotation speed in degrees per second
+
+    void Update()
+    {
+        // Rotate the cube around its Y axis (up direction)
+        transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+
+        // Optionally, you can add rotation around other axes
+        // Example: Uncomment below to rotate on X, Y, and Z axes
+        // transform.Rotate(new Vector3(10, 20, 30) * Time.deltaTime);
+    }
+}
