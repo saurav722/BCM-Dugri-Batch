@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class AudioCoin : MonoBehaviour
+public class Coin : MonoBehaviour
 {
     public AudioClip collectSound; // The sound to play when the coin is collected
 
