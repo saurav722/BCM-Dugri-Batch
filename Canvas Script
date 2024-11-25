@@ -1,0 +1,34 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class SceneM : MonoBehaviour
+{
+    public GameObject mainMenu;   // Reference to the Main Menu panel
+    public GameObject levelsMenu; // Reference to the Levels panel
+
+    public void ShowLevels()
+    {
+        mainMenu.SetActive(false);   // Hide the Main Menu
+        levelsMenu.SetActive(true);  // Show the Levels Panel
+    }
+
+    // This function can be used to go back to the Main Menu from Levels Menu
+    public void ShowMainMenu()
+    {
+        mainMenu.SetActive(true);   // show the Main Menu
+        levelsMenu.SetActive(false);  // hide the Levels Pane 
+    }
+
+    // Function to load Level 1
+    public void LoadLevel1()
+    {
+        SceneManager.LoadScene("Level1");
+    }
+
+    // Function to load Level 2
+    public void LoadLevel2()
+    {
+        SceneManager.LoadScene("Level2");
+    }
+    
+}
