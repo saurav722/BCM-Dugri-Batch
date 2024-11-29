@@ -4,40 +4,57 @@ using TMPro;
 
 public class BallMovement : MonoBehaviour
 {
-    //public TextMeshProUGUI valueText; // For displaying collectibles count
-    //public TextMeshProUGUI healthText; // UI Text to show health remaining
+    // UI Elements
+    public TextMeshProUGUI valueText; // For displaying collectibles count
+    public TextMeshProUGUI healthText; // For displaying health remaining
 
+    // Player stats
     private int value = 0;
-    private int health = 2; // Set initial health to 2
+    private int health = 2; // Initial health
+    public int collectiblesCount = 0;
+
+    // Movement settings
     public float speed = 10f;
-    public Transform cameraTransform;
+    public float jumpForce = 5f; // Force for jumping
+    private bool isGrounded; // Flag to check if the ball is grounded
+
+    // Respawn and falling settings
     public Transform spawnPoint;
     public float fallThreshold = -10f;
-    //public int collectiblesCount = 0;
+
+    // Camera reference
+    public Transform cameraTransform;
+
+    // Scene management
+    public string gameOverScene = "GameOver";
+
+    // Rigidbody reference
     private Rigidbody rb;
 
-    //public string gameOverScene = "GameOver"; // The scene to load when health reaches zero
-
+    // Unity methods
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        Respawn();  // Set the ball's initial position to the spawn point
-        //UpdateUI();
+        Respawn();
+        UpdateUI();
     }
 
-    /*void UpdateUI()
+    void Update()
+    {
+        HandleMovement();
+        HandleJump();
+        CheckFall();
+    }
+
+    // Custom methods
+    private void UpdateUI()
     {
         valueText.text = "Collectibles: " + collectiblesCount.ToString();
         healthText.text = "Lives: " + health.ToString();
     }
-    */
 
-    void Update()
+    private void HandleMovement()
     {
-        //value = collectiblesCount;
-        //UpdateUI();
-
-        // Ball movement logic
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
@@ -52,68 +69,46 @@ public class BallMovement : MonoBehaviour
 
         Vector3 movement = (cameraForward * moveVertical + cameraRight * moveHorizontal).normalized;
         rb.AddForce(movement * speed);
+    }
 
-        // Check if the ball has fallen off the map
-        if (transform.position.y < fallThreshold)
+    private void HandleJump()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            //LoseLife();
-            Respawn();
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
 
-    // Function to handle respawn and reduce lives
-    /*void LoseLife()
+    private void CheckFall()
     {
-        health--; // Reduce health by one
+        if (transform.position.y < fallThreshold)
+        {
+            LoseLife();
+        }
+    }
+
+    private void LoseLife()
+    {
+        health--;
         if (health > 0)
         {
             Respawn();
         }
         else
         {
-            SceneManager.LoadScene(gameOverScene); // Load the game over scene
+            SceneManager.LoadScene(gameOverScene);
         }
-        //UpdateUI();
+        UpdateUI();
     }
-    */
 
-    // Function to respawn the ball
-    void Respawn()
+    private void Respawn()
     {
         transform.position = spawnPoint.position;
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
     }
 
-    // Detect collisions
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.name.Contains("Obs"))
-        {
-            //LoseLife();  // Reduce life on hitting an obstacle
-            Respawn();
-        }
-
-        if (collision.gameObject.name.Contains("NextLevel"))
-        {
-            LoadNextLevel();  // Load the next level when touching the goal
-        }
-    }
-
-    // Detect when the ball triggers a collectible
-    /*private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.name.Contains("Coin"))
-        {
-            collectiblesCount++;
-            Destroy(other.gameObject);  // Destroy the collectible
-            Debug.Log("Collected an item! Total collected: " + collectiblesCount);
-            //UpdateUI();
-        }
-    }*/
-
-    // Function to load the next level in the build settings
-    void LoadNextLevel()
+    private void LoadNextLevel()
     {
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         if (currentSceneIndex < SceneManager.sceneCountInBuildSettings - 1)
@@ -123,7 +118,42 @@ public class BallMovement : MonoBehaviour
         else
         {
             Debug.Log("No more levels. Restarting the game or displaying end screen.");
-            SceneManager.LoadScene(0);  // Restart from the first level
+            SceneManager.LoadScene(0); // Restart from the first level
         }
+    }
+
+    // Collision and trigger detection
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.name.Contains("Obs"))
+        {
+            LoseLife();
+        }
+
+        if (collision.gameObject.name.Contains("NextLevel"))
+        {
+            LoadNextLevel();
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.name.Contains("Coin"))
+        {
+            collectiblesCount++;
+            Destroy(other.gameObject);
+            Debug.Log("Collected an item! Total collected: " + collectiblesCount);
+            UpdateUI();
+        }
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        isGrounded = true; // Ball is on the ground
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        isGrounded = false; // Ball is no longer grounded
     }
 }
